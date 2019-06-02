@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+Software License Agreement (BSD)
+
+\file      description.urdf.xacro
+\authors   Paul Bovbel <pbovbel@clearpathrobotics.com>, Devon Ash <dash@clearpathrobotics.com>
+\copyright Copyright (c) 2015, Clearpath Robotics, Inc., All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * Neither the name of Clearpath Robotics nor the names of its contributors may be used to endorse or promote
+   products derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<robot name="husky" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)" />
+  <xacro:arg name="ur5_enabled" default="$(optenv HUSKY_UR5_ENABLED false)" />
+  <xacro:arg name="kinect_enabled" default="false" />
+
+  <xacro:include filename="$(find husky_description)/urdf/husky.urdf.xacro" />
+  <xacro:husky_robot />
+
+  <!-- Insert customization below, sample provided: -->
+
+  <link name="trailer_link">
+      <inertial>
+        <mass value="13.122"/>
+        <origin xyz="0.805 0.001 -0.035"/>
+        <inertia ixx="0.714" ixy="0.0" ixz="0.019" iyy="1.462" iyz="0.0" izz="2.034"/>
+      </inertial>
+      <collision>
+        <origin xyz="0.8636 0.001 -0.035"/>
+        <geometry>
+          <box size="0.9144 0.7 0.254"/>
+        </geometry>
+      </collision>
+      <visual>
+        <origin rpy="1.5708 0 1.5708" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://project/meshes/husky_trailer_newcoords.stl"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+    </link>
+
+    <joint name="trailer_joint" type="revolute">
+      <origin xyz="0.05 0 0" rpy="0 0 0" />
+      <axis xyz="0 0 1"/>
+      <limit effort="1000.0" lower="-1.5708" upper="1.5708" velocity="0.5"/>
+      <parent link="rear_bumper_link" />
+      <child link="trailer_link" />
+    </joint>
+
+    <link name="left_trailer_wheel">
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 -0.0381"/>
+        <geometry>
+          <mesh filename="package://project/meshes/wheel_8in_newcoords.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <inertial>
+        <mass value="1.248"/>
+        <origin xyz="0 0 0.01905"/>
+        <inertia ixx="0.004" ixy="0.0" ixz="0.0" iyy="0.004" iyz="0.0" izz="0.007"/>
+      </inertial>
+    </link>
+
+    <joint name="left_trailer_wheel_joint" type="continuous">
+      <origin xyz="0.98679 0.35687 -0.139" rpy="$-1.5708 0 0" />
+      <axis xyz="0 0 1"/>
+      <parent link="trailer_link"/>
+      <child link="left_trailer_wheel"/>
+    </joint>
+
+    <link name="right_trailer_wheel">
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 $-0.0381"/>
+        <geometry>
+          <mesh filename="package://project/meshes/wheel_8in_newcoords.stl"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+    </link>
+
+    <joint name="right_trailer_wheel_joint" type="continuous">
+      <origin xyz="0.98679 -0.35687 -0.139" rpy="$1.5708 0 0" />
+      <axis xyz="0 0 1"/>
+      <parent link="trailer_link"/>
+      <child link="right_trailer_wheel"/>
+    </joint>
+
+</robot>

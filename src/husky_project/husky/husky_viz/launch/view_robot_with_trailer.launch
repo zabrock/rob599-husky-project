@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED true)"/>
+  <arg name="kinect_enabled" default="false"/>
+
+  <!-- Standalone launcher to visualize the robot model. -->
+  <include file="$(find husky_project)/husky/husky_description/launch/description.launch">
+    <arg name="laser_enabled" value="$(arg laser_enabled)"/>
+    <arg name="kinect_enabled" value="$(arg kinect_enabled)"/>
+  </include>
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find husky_project)/husky/husky_viz/rviz/robot.rviz" />
+  <node name="trailer_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+    
+  </node>
+</launch>
