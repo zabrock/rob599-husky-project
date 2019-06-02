@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+
+# Every python controller needs these lines
+import rospy
+
+# The goal command message
+from geometry_msgs.msg import PoseStamped
+
+# The laser scan message
+from math import sin, cos, atan2
+
+if __name__ == '__main__':
+	rospy.init_node('goal_picker')
+
+	# A publisher for the move data
+	pub = rospy.Publisher('move_base/goal', PoseStamped, queue_size=1)
+	msg = PoseStamped()
+	msg.header.stamp = rospy.Time.now()
+	msg.header.frame_id = 'odom'
+	msg.pose.position.x = 5
+m	msg.pose.position.y = 3
+	msg.pose.position.z = 0
+	msg.pose.orientation.x = 0
+	msg.pose.orientation.y = 0
+	msg.pose.orientation.z = 0
+	msg.pose.orientation.w = 1
+
+	rospy.spin()

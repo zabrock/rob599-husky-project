@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find husky_project)/husky/husky_gazebo/launch/husky_playpen.launch" />
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot.launch" />
+  <include file="$(find husky_navigation)/launch/move_base_mapless_demo.launch" />
+</launch>

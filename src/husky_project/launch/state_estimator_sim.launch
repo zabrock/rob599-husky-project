@@ -1,0 +1,5 @@
+<launch>
+  <node name="trailer_state_estimator" pkg="husky_project" type="kinematic_model_odom.py" />
+  <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering" />
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot_with_trailer.launch" />
+</launch>
