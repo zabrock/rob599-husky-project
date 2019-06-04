@@ -1,0 +1,17 @@
+<launch>
+  <node name="robot_delivery" pkg="husky_project" type="inventory.py" output="screen" />
+  
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot.launch" />
+  
+
+  <!-- Run the map server -->
+  <arg name="map_file" default="$(find husky_navigation)/maps/playpen_map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+  <!--- Run AMCL -->
+  <include file="$(find husky_navigation)/launch/amcl.launch" />
+
+  <include file="$(find husky_navigation)/launch/move_base.launch">
+  </include>
+
+</launch>

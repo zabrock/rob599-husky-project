@@ -3,6 +3,7 @@
 import rospy
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Float64
 
 import numpy as np
 from scipy.integrate import odeint
@@ -117,6 +118,7 @@ class ArticulationAngleEstimator:
 		self.joint_state.velocity = [0.0,0.0,0.0]
 		self.vel_sub = rospy.Subscriber("cmd_vel",Twist,self.vel_callback,queue_size=1)
 		self.pub = rospy.Publisher("joint_states",JointState,queue_size=1)
+		self.angle_pub = rospy.Publisher("articulation_angle",Float64,queue_size=1)
 		self.solver = ODESolver(l,a,b)
 
 	def vel_callback(self,msg):
@@ -130,6 +132,7 @@ class ArticulationAngleEstimator:
 			self.joint_state.velocity+=[0.0,0.0,0.0]
 			self.joint_state.header.stamp = rospy.Time.now()
 			self.pub.publish(self.joint_state)
+			self.angle_pub.publish(articulation_angle)
 
 	def twist_to_ackerman(self,twist):
 		w = twist.angular.z
@@ -138,7 +141,6 @@ class ArticulationAngleEstimator:
 			delta = 0
 		else:
 			delta = np.arctan2(self.l*w,v)
-		print(v,delta)
 		return [v,delta]
 		
 

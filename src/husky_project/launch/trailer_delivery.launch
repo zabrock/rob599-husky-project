@@ -1,0 +1,11 @@
+<launch>
+  <node name="trailer_state_estimator" pkg="husky_project" type="kinematic_model_odom.py" />
+  <node name="footprint_adjuster" pkg="husky_project" type="footprint_adjuster.py" />
+  <node name="robot_delivery" pkg="husky_project" type="inventory.py" output="screen" />
+  <include file="$(find husky_navigation)/launch/move_base.launch">
+    <arg name="no_static_map" value="true"/>
+    <arg name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    <rosparam file="$(find husky_project)/config/base_local_planner_params.yaml" command="load" />
+  </include>
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot_with_trailer.launch" />
+</launch>

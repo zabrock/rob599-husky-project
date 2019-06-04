@@ -3,9 +3,20 @@
 # Every python controller needs these lines
 import rospy
 
+import actionlib
+import numpy as np
+
 # The goal command message
-from move_base_msgs.msg import MoveBaseActionGoal
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from geometry_msgs.msg import Pose, Point, Quaternion
+from actionlib_msgs.msg import GoalStatus
+from tf.transformations import quaternion_from_euler
 from nav_msgs.msg import Odometry
+
+def heading(yaw):
+	"""A helper function to getnerate quaternions from yaws."""
+	q = quaternion_from_euler(0, 0, yaw)
+	return Quaternion(*q)
 
 class Robot:
 	def __init__(self):
@@ -13,6 +24,11 @@ class Robot:
 		self.inventory = []
 		self.x = 0.0
 		self.y = 0.0
+		self.delivery_in_progress = False
+		# A subscriber for the laser scan data
+		self.sub = rospy.Subscriber('odometry/filtered', Odometry, self.odom_callback)
+		self.move_base = actionlib.SimpleActionClient('move_base',MoveBaseAction)
+		self.move_base.wait_for_server()
 
 	def test_inventory(self):
 		# Set inventory to a test case
@@ -38,9 +54,40 @@ class Robot:
 		self.inventory.append(item_name)
 		print(item_name + " successfully added to inventory")
 	
-	def odom_callback(msg):
+	def odom_callback(self,msg):
 		self.x = msg.pose.pose.position.x
 		self.y = msg.pose.pose.position.y
+
+
+	def go_to_goal(self,idx):
+		x, y = raw_input("Enter goal coordinates: ").split()
+		try:
+			x = float(x); y = float(y)
+		except ValueError:
+			print("User did not enter numbers!")
+	
+		theta = np.arctan2(y-self.y,x-self.x)
+
+		goal = MoveBaseGoal()
+		goal.target_pose.header.stamp = rospy.Time.now()
+		goal.target_pose.header.frame_id = 'odom'
+		goal.target_pose.pose = Pose(Point(x,y,0), heading(theta))
+		self.move_base.send_goal(goal)
+		print('Delivering item')
+		success = self.move_base.wait_for_result(rospy.Duration(120))
+		state = self.move_base.get_state()
+		
+		if success and state == GoalStatus.SUCCEEDED:
+			confirmation = raw_input("Delivery successful? (y/n) ")
+			if confirmation == 'y':
+				self.take_from_inventory(idx-1)
+				self.delivery_in_progress = False
+				print("Delivery confirmed - ready for next command")
+			else:
+				print("Sorry! Please enter next coordinates to attempt.")
+		else:
+			print("Delivery not possible - can't reach destination!")
+			print("Please enter next coordinates to attempt.")
 
 def help_dialog():
 	print("\nCommand:\tAction:")
@@ -48,30 +95,16 @@ def help_dialog():
 	print("inventory\tLists items currently in robot inventory")
 	print("delivery\tInitiates delivery of item from inventory")
 	print("add_item\tInitiates addition of item to inventory")
+	print("current_location\tLists current x- and y- coordinates from odometry")
 	print("quit\t\tExits program")
 	print("\n")
 
-def go_to_goal():
-	x, y = raw_input("Enter goal coordinates: ").split()
-	try:
-		x = float(x); y = float(y)
-	except ValueError:
-		print("User did not enter numbers!")
-	msg = MoveBaseActionGoal()
-	msg.goal.target_pose.header.stamp = rospy.Time.now()
-	msg.goal.target_pose.header.frame_id = 'odom'
-	msg.goal.target_pose.pose.position.x = x
-	msg.goal.target_pose.pose.position.y = y
-	msg.goal.target_pose.pose.orientation.w = 1.0
-	return msg
+	
 	
 	
 def main():
 	rospy.init_node('goal_sender')
 	robot = Robot()
-	# A subscriber for the laser scan data
-	sub = rospy.Subscriber('odom', Odometry, robot.odom_callback)
-	pub = rospy.Publisher('move_base/goal', MoveBaseActionGoal, queue_size=1)
 	
 	robot.test_inventory()
 	accept_commands = True
@@ -84,27 +117,28 @@ def main():
 			robot.print_inventory()
 		elif cmd == 'delivery':
 			if len(robot.inventory) > 0:
-				delivery_in_progress = True
-				while delivery_in_progress:
-					robot.print_inventory()
-					idx = raw_input('Enter index of item you would like to have delivered: ')
-					try:
-						idx = int(idx)
-					except ValueError:
-						print("User didn't enter a number!")
-					if idx > 0 and idx <= len(robot.inventory):
-						pub.publish(go_to_goal())
-						print('Delivering item')
-						robot.take_from_inventory(idx-1)
-						delivery_in_progress = False
-						
-					else:
-						print('Entered index doesn\'t correlate to an item in inventory!')
+				robot.print_inventory()
+				idx = raw_input('Enter index of item you would like to have delivered: ')
+				try:
+					idx = int(idx)
+				except ValueError:
+					print("User didn't enter a number!")
+				if idx > 0 and idx <= len(robot.inventory):
+					robot.delivery_in_progress = True
+					while robot.delivery_in_progress:
+						robot.go_to_goal(idx)
+				else:
+					print('Entered index doesn\'t correlate to an item in inventory!')
+				
+				
+					
 			else:
 				print("Can't deliver - nothing in inventory!")
 		elif cmd == 'add_item':	
 			item_name = raw_input('Enter name of item to be added to inventory: ')	
 			robot.add_to_inventory(item_name)
+		elif cmd == 'current_location':
+			print 'X: ',robot.x,' Y: ',robot.y
 		elif cmd == 'quit':
 			print("Goodbye!")
 			accept_commands = False

@@ -1,0 +1,10 @@
+<launch> 
+
+  <arg name="map_file" value="/home/user/catkin_ws/src/provide_map/maps/my_map.yaml">
+  </arg> 
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)"> 
+  </node>
+  <include file=""$(find husky_navigation)/launch/amcl.launch" />
+  <include file="$(find husky_project)/launch/robot_delivery.launch" />
+  
+</launch>

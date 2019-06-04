@@ -1,0 +1,7 @@
+<launch>
+  <node name="robot_delivery" pkg="husky_project" type="inventory.py" output="screen" />
+  <include file="$(find husky_navigation)/launch/move_base.launch">
+    <arg name="no_static_map" value="true"/>
+  </include>
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot.launch" />
+</launch>

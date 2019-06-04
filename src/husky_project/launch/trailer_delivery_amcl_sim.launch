@@ -1,0 +1,22 @@
+<launch>
+  <node name="trailer_state_estimator" pkg="husky_project" type="kinematic_model_odom.py" />
+  <node name="footprint_adjuster" pkg="husky_project" type="footprint_adjuster.py" />
+  <node name="robot_delivery" pkg="husky_project" type="inventory.py" output="screen" />
+
+  <!-- Run the map server -->
+  <arg name="map_file" default="$(find husky_navigation)/maps/playpen_map.yaml"/>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+  
+  <!--- Run AMCL -->
+  <include file="$(find husky_navigation)/launch/amcl.launch" />
+
+  <include file="$(find husky_project)/launch/move_base_custom.launch">
+    <arg name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+    
+  </include>
+  <rosparam file="$(find husky_project)/config/base_local_planner_params.yaml" command="load" />
+    <param name="local_costmap/width" value="5.0"/>
+    <param name="local_costmap/height" value="5.0"/>
+    <param name="local_costmap/resolution" value="0.1"/>
+  <include file="$(find husky_project)/husky/husky_viz/launch/view_robot_with_trailer.launch" />
+</launch>
