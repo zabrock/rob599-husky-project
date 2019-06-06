@@ -1,5 +1,5 @@
 image: parking_lot_loop_cropped.pgm
-resolution: 0.050000
+resolution: 0.10000
 origin: [-55.00000, -26.500000, 0.000000]
 negate: 0
 occupied_thresh: 0.65
