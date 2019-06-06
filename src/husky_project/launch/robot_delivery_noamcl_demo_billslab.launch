@@ -1,0 +1,11 @@
+<launch>
+  <node name="robot_delivery" pkg="husky_project" type="inventory.py" output="screen" />
+  
+  <include file="$(find hector_mapping)/launch/mapping_default.launch"/>
+  <include file="$(find husky_project)/launch/view_robot_gmapping.launch"/>
+
+  <include file="$(find husky_navigation)/launch/move_base.launch">
+    <arg name="no_static_map" value="true" />
+  </include>
+
+</launch>

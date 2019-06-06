@@ -1,0 +1,5 @@
+<launch>
+  <!-- <include file="$(find husky_navigation)/launch/gmapping_demo.launch"/> -->
+  <include file="$(find hector_mapping)/launch/mapping_default.launch"/>
+  <include file="$(find husky_project)/launch/view_robot_gmapping.launch"/>
+</launch>

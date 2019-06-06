@@ -10,8 +10,10 @@
 
   <!--- Run AMCL -->
   <include file="$(find husky_navigation)/launch/amcl.launch" />
+  <!-- <include file="$(find amcl)/examples/amcl_diff.launch" /> -->
 
   <include file="$(find husky_navigation)/launch/move_base.launch">
+    <arg name="no_static_map" value="true"/>
   </include>
 
 </launch>
