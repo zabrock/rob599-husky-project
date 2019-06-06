@@ -38,14 +38,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL
     <rosparam file="$(find husky_navigation)/config/planner.yaml" command="load"/>
 
     <!-- observation sources located in costmap_common.yaml -->
-    <rosparam file="$(find husky_project)/config/costmap_common.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find husky_project)/config/costmap_common.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find husky_navigation)/config/costmap_common.yaml" command="load" ns="local_costmap" />
 
     <!-- local costmap, needs size -->
     <rosparam file="$(find husky_navigation)/config/costmap_local.yaml" command="load" ns="local_costmap" />
-    <param name="local_costmap/width" value="5.0"/>
-    <param name="local_costmap/height" value="5.0"/>
-    <param name="local_costmap.resolution" value="0.1"/>
+    <param name="local_costmap/width" value="7.0"/>
+    <param name="local_costmap/height" value="7.0"/>
+    <param name="local_costmap/resolution" value="0.075"/>
 
     <!-- static global costmap, static map provides size -->
     <rosparam file="$(find husky_navigation)/config/costmap_global_static.yaml" command="load" ns="global_costmap" unless="$(arg no_static_map)"/>

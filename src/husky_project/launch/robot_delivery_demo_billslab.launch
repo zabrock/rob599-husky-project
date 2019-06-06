@@ -5,14 +5,14 @@
   
 
   <!-- Run the map server -->
-  <arg name="map_file" default="$(find husky_project)/maps/bills_lab.yaml"/>
+  <arg name="map_file" default="$(find husky_project)/maps/bills_lab_cropped.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!--- Run AMCL -->
-  <!-- <include file="$(find husky_navigation)/launch/amcl.launch" /> -->
-  <include file="$(find amcl)/examples/amcl_diff.launch" />
+  <include file="$(find husky_navigation)/launch/amcl.launch" />
+  <!-- <include file="$(find amcl)/examples/amcl_diff.launch" /> -->
 
-  <include file="$(find husky_navigation)/launch/move_base.launch">
+  <include file="$(find husky_project)/launch/move_base_custom2.launch">
   </include>
 
 </launch>

@@ -5,14 +5,14 @@
   
 
   <!-- Run the map server -->
-  <arg name="map_file" value="$(find husky_project)/maps/parking_lot_loop.yaml"/>
+  <arg name="map_file" value="$(find husky_project)/maps/parking_lot_loop_cropped.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!--- Run AMCL -->
   <include file="$(find husky_navigation)/launch/amcl.launch" />
   <!-- <include file="$(find amcl)/examples/amcl_diff.launch" /> -->
 
-  <include file="$(find husky_navigation)/launch/move_base.launch">
+  <include file="$(find husky_project)/launch/move_base_custom2.launch">
   </include>
 
 </launch>
