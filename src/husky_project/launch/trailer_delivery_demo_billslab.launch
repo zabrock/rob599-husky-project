@@ -1,3 +1,6 @@
+
+
+
 <launch>
   <node name="trailer_state_estimator" pkg="husky_project" type="kinematic_model_odom.py" />
   <node name="footprint_adjuster" pkg="husky_project" type="footprint_adjuster.py" />
@@ -7,7 +10,7 @@
   
 
   <!-- Run the map server -->
-  <arg name="map_file" value="$(find husky_project)/maps/parking_lot_loop_cropped.yaml"/>
+  <arg name="map_file" default="$(find husky_project)/maps/bills_lab_cropped.yaml"/>
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
 
   <!--- Run AMCL -->
@@ -15,13 +18,6 @@
   <!-- <include file="$(find amcl)/examples/amcl_diff.launch" /> -->
 
   <include file="$(find husky_project)/launch/move_base_custom.launch">
-    <arg name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
-    
   </include>
-  <rosparam file="$(find husky_project)/config/base_local_planner_params.yaml" command="load" />
-    <param name="move_base/local_costmap/width" value="10.0"/>
-    <param name="move_base/local_costmap/height" value="10.0"/>
-    <param name="move_base/local_costmap/resolution" value="0.2"/>
-  
 
 </launch>

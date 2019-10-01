@@ -137,7 +137,7 @@ class ArticulationAngleEstimator:
 		articulation_angle = state[3]-state[4]
 		self.joint_state.position = [-articulation_angle,0.0,0.0]
 		self.joint_state.name = [self.joint_name,"left_trailer_wheel_joint","right_trailer_wheel_joint"]
-		self.joint_state.velocity+=[0.0,0.0,0.0]
+		self.joint_state.velocity=[0.0,0.0,0.0]
 		self.joint_state.header.stamp = rospy.Time.now()
 		self.pub.publish(self.joint_state)
 		self.angle_pub.publish(articulation_angle)
